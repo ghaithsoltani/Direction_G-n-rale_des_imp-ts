@@ -137,7 +137,7 @@
 		<!-- ===== Reconnaissance faciale : JavaCV Platform (includes all native libs) ===== -->
 		<dependency>
 			<groupId>org.bytedeco</groupId>
-			<artifactId>javacv-platform</artifactId>
+			<artifactId>javacv</artifactId>
 			<version>${javacv.version}</version>
 		</dependency>
 
