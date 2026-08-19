@@ -1,0 +1,234 @@
+<div class="min-h-screen" [ngClass]="{
+         'bg-slate-50 text-slate-900': theme() === 'light',
+         'bg-slate-950 text-slate-100': theme() === 'dark'
+     }">
+    <a href="#contenu-principal" class="skip-link">{{ tr('Aller au contenu principal', 'الانتقال إلى المحتوى الرئيسي')
+        }}</a>
+    <div class="flex min-h-screen flex-col lg:flex-row">
+        <aside class="hidden w-72 flex-col border-r px-6 py-8 lg:flex" [ngClass]="{
+                'border-slate-200 bg-slate-100 text-slate-900': theme() === 'light',
+                'border-slate-900 bg-slate-950 text-slate-200': theme() === 'dark'
+            }">
+            <div class="flex items-center gap-3">
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-600 p-1 shadow-lg shadow-blue-600/20">
+                    <img src="/assets/portail-fiscal-logo.svg" alt="Portail Fiscal"
+                        class="h-full w-full object-contain" />
+                </div>
+                <div>
+                    <p class="text-sm font-semibold"
+                        [ngClass]="{ 'text-slate-900': theme() === 'light', 'text-white': theme() === 'dark' }">Portail
+                        fiscal</p>
+                    <p class="text-xs text-slate-400">Direction Générale des Impôts</p>
+                </div>
+            </div>
+
+            <div class="mt-8 rounded-[28px] border p-4 shadow-lg" [ngClass]="{
+                    'border-slate-200/50 bg-white/80 text-slate-900': theme() === 'light',
+                    'border-white/10 bg-slate-900/50 text-slate-100': theme() === 'dark'
+                }">
+                <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Profil</p>
+                <div class="mt-3 flex items-center gap-3">
+                    <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-slate-200 text-sm font-semibold text-slate-700"
+                        [ngClass]="{ 'bg-slate-200 text-slate-700': theme() === 'light', 'bg-slate-700 text-slate-100': theme() === 'dark' }">
+                        <img *ngIf="utilisateur()?.photoUrl; else initialsTemplate" [src]="utilisateur()?.photoUrl"
+                            alt="Photo de profil" class="h-full w-full object-cover" />
+                        <ng-template #initialsTemplate>
+                            <span class="flex h-full w-full items-center justify-center bg-blue-500/20 text-blue-900"
+                                [ngClass]="{ 'text-blue-900': theme() === 'light', 'text-blue-100 bg-blue-500/30': theme() === 'dark' }">
+                                {{ initiales() }}
+                            </span>
+                        </ng-template>
+                    </div>
+                    <div class="min-w-0 flex-1 flex flex-col gap-2">
+                        <p class="font-semibold text-base"
+                            [ngClass]="{ 'text-slate-900': theme() === 'light', 'text-white': theme() === 'dark' }">
+                            {{ (utilisateur()?.prenom || '') + ' ' + (utilisateur()?.nom || '') | trimName }}
+                        </p>
+                        <p class="truncate text-sm text-slate-400" [title]="utilisateur()?.email || 'Accès sécurisé'">{{ utilisateur()?.email || 'Accès sécurisé' }}</p>
+                        <p class="text-xs uppercase tracking-[0.25em] text-slate-500">{{ utilisateur()?.role ||
+                            'CONTRIBUABLE' }}</p>
+                        <label
+                            class="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+                            <span>Changer la photo</span>
+                            <input type="file" accept="image/*" class="hidden" (change)="onPhotoSelected($event)" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="mt-8 space-y-3" [attr.aria-label]="tr('Navigation principale', 'التنقل الرئيسي')">
+                @for (item of navigation(); track item.id) {
+                <a [routerLink]="item.route" routerLinkActive #navigationLink="routerLinkActive"
+                    [routerLinkActiveOptions]="{ exact: item.route === '/immatriculation' }"
+                    class="flex items-center gap-3 rounded-3xl px-4 py-4 text-sm font-semibold transition duration-200"
+                    [ngClass]="navigationLink.isActive
+                        ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700'
+                        : theme() === 'dark'
+                            ? 'bg-slate-900/70 text-slate-100 hover:bg-slate-900/90'
+                            : 'bg-slate-100 text-slate-900 hover:bg-slate-200'">
+                    <app-icon [name]="item.icon" size="md"></app-icon>
+                    {{ item.label }}
+                </a>
+                }
+            </nav>
+
+            <div class="mt-auto rounded-3xl border p-4" [ngClass]="{
+                    'border-slate-200/60 bg-slate-50 text-slate-900': theme() === 'light',
+                    'border-slate-800 bg-slate-900/70 text-slate-200': theme() === 'dark'
+                }">
+                <p class="text-sm font-semibold text-emerald-500">Service en ligne 24/7</p>
+                <p class="mt-1 text-sm text-slate-400">Vos démarches fiscales sont protégées et suivies en temps réel.
+                </p>
+            </div>
+        </aside>
+
+        <div class="flex-1">
+            <header class="border-b px-4 py-4 backdrop-blur md:px-8" [ngClass]="{
+                        'border-slate-200 bg-white/90': theme() === 'light',
+                        'border-slate-700 bg-slate-950/90 text-slate-100': theme() === 'dark'
+                    }">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <button class="rounded-2xl border p-2 lg:hidden"
+                            [attr.aria-label]="tr('Ouvrir le menu', 'فتح القائمة')" [attr.aria-expanded]="menuOuvert()"
+                            [ngClass]="{
+                                'border-slate-200 text-slate-600 bg-white/90': theme() === 'light',
+                                'border-slate-700 text-slate-200 bg-slate-900/80': theme() === 'dark'
+                            }" (click)="basculerMenu()"><app-icon name="menu" size="md" /></button>
+                        <div>
+                            <p class="text-sm font-semibold"
+                                [ngClass]="{ 'text-slate-500': theme() === 'light', 'text-slate-300': theme() === 'dark' }">
+                                {{ tr('Portail DGI', 'بوابة الضرائب') }}</p>
+                            <h1 class="text-xl font-semibold"
+                                [ngClass]="{ 'text-slate-900': theme() === 'light', 'text-white': theme() === 'dark' }">
+                                {{ tr('Espace de services numériques', 'فضاء الخدمات الرقمية') }}</h1>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <form class="relative hidden items-center gap-2 rounded-2xl border px-3 py-2 md:flex"
+                            (submit)="lancerRecherche($event)" [ngClass]="{
+                                'border-slate-200 bg-slate-50 text-slate-900': theme() === 'light',
+                                'border-slate-700 bg-slate-900 text-slate-100': theme() === 'dark'
+                            }">
+                            <app-icon name="search" size="sm"></app-icon>
+                            <input type="search" name="rechercheGlobale"
+                                class="w-44 bg-transparent text-sm outline-none" [ngModel]="rechercheGlobale()"
+                                (ngModelChange)="rechercheGlobale.set($event)" (focus)="ouvrirHistorique()"
+                                (blur)="fermerHistoriqueApresDelai()" (keydown.escape)="effacerRecherche()"
+                                [attr.aria-label]="tr('Rechercher', 'بحث')" [placeholder]="tr('Rechercher', 'بحث')"
+                                [attr.title]="estAgent() ? tr('Rechercher un dossier puis appuyer sur Entrée', 'ابحث عن ملف ثم اضغط Enter') : tr('Recherche disponible dans les listes de dossiers', 'البحث متاح في قوائم الملفات')" />
+                            @if (rechercheGlobale()) {
+                            <button type="button" (click)="effacerRecherche()"
+                                class="text-xs text-slate-400 hover:text-slate-700"
+                                [attr.aria-label]="tr('Effacer la recherche', 'مسح البحث')"><app-icon name="close"
+                                    size="sm"></app-icon></button>
+                            }
+                            <button type="submit" [disabled]="!rechercheGlobale().trim() || !estAgent()"
+                                class="rounded-xl bg-blue-600 px-2 py-1 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                                [attr.aria-label]="tr('Lancer la recherche', 'بدء البحث')">
+                                {{ tr('Chercher', 'بحث') }}
+                            </button>
+                            @if (historiqueOuvert() && historiqueRecherches().length && estAgent()) {
+                            <div
+                                class="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                                <div class="flex items-center justify-between px-2 py-1.5">
+                                    <p class="text-xs font-semibold text-slate-500">{{ tr('Recherches récentes', 'عمليات
+                                        البحث الأخيرة') }}</p>
+                                    <button type="button" (mousedown)="$event.preventDefault()"
+                                        (click)="viderHistorique()"
+                                        class="text-xs font-medium text-blue-700 hover:underline dark:text-blue-300">{{
+                                        tr('Effacer', 'مسح') }}</button>
+                                </div>
+                                @for (recherche of historiqueRecherches(); track recherche) {
+                                <button type="button" (mousedown)="$event.preventDefault()"
+                                    (click)="rechercherDepuisHistorique(recherche)"
+                                    class="flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
+                                    <span aria-hidden="true">↻</span><span class="truncate">{{ recherche }}</span>
+                                </button>
+                                }
+                            </div>
+                            }
+                        </form>
+                        <a routerLink="/notifications" class="rounded-2xl border p-2"
+                            aria-label="Ouvrir les notifications" [ngClass]="{
+                            'border-slate-200 text-slate-600 bg-white/90 hover:bg-slate-100': theme() === 'light',
+                            'border-slate-700 text-slate-200 bg-slate-900/80 hover:bg-slate-800': theme() === 'dark'
+                            }"><app-icon name="notifications" size="md"></app-icon></a>
+                        <button class="rounded-2xl border p-2 transition" [ngClass]="{
+                                'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100': theme() === 'light',
+                                'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800': theme() === 'dark'
+                            }" (click)="basculerTheme()" [attr.aria-label]="themeLabel()">
+                            <app-icon [name]="theme() === 'dark' ? 'sun' : 'moon'" size="md"></app-icon>
+                        </button>
+                        <button class="rounded-2xl border p-2 text-xs font-bold transition" [ngClass]="{
+                                'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100': theme() === 'light',
+                                'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800': theme() === 'dark'
+                            }" (click)="basculerLangue()" [attr.aria-label]="langueLabel()"><app-icon name="language"
+                                size="md"></app-icon></button>
+                        <button class="rounded-2xl border p-2 text-sm transition" [ngClass]="{
+                                'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100': theme() === 'light',
+                                'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800': theme() === 'dark'
+                            }" (click)="basculerContraste()" [attr.aria-label]="contrasteLabel()"><app-icon
+                                name="contrast" size="md"></app-icon></button>
+                        <button class="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+                            (click)="deconnecter()">{{ tr('Déconnexion', 'تسجيل الخروج') }}</button>
+                    </div>
+                </div>
+            </header>
+
+            @if (menuOuvert()) {
+            <div class="border-b border-slate-200 bg-slate-950 p-4 lg:hidden">
+                <nav class="space-y-2" [attr.aria-label]="tr('Navigation mobile', 'التنقل على الهاتف')">
+                    @for (item of navigation(); track item.id) {
+                    <a [routerLink]="item.route" (click)="fermerMenu()"
+                        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-300">
+                        <app-icon [name]="item.icon" size="md"></app-icon>
+                        {{ item.label }}
+                    </a>
+                    }
+                </nav>
+            </div>
+            }
+
+            <main id="contenu-principal" tabindex="-1" class="p-4 md:p-8">
+                <router-outlet />
+            </main>
+            <footer class="border-t px-4 py-6 md:px-8" [ngClass]="{
+                        'border-slate-200 bg-white/90 text-slate-900': theme() === 'light',
+                        'border-slate-800 bg-slate-950/90 text-slate-300': theme() === 'dark'
+                    }">
+                <div class="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:justify-between">
+                    <div class="space-y-2">
+                        <p class="text-sm font-semibold">Portail Fiscal - Direction Générale des Impôts</p>
+                        <p class="text-sm text-slate-500"
+                            [ngClass]="{ 'text-slate-500': theme() === 'light', 'text-slate-400': theme() === 'dark' }">
+                            Services numériques pour la gestion et le suivi des immatriculations fiscales des
+                            entreprises et contribuables.</p>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Contact</p>
+                            <p class="text-sm">Adresse: Rue de l'Administration, Tunis, Tunisie</p>
+                            <p class="text-sm">Téléphone: +216 71 123 456</p>
+                            <p class="text-sm">Email: contact&#64;dgi.tn</p>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Entreprise</p>
+                            <p class="text-sm">Direction Générale des Impôts</p>
+                            <p class="text-sm">SIRET: 123 456 789 00012</p>
+                            <p class="text-sm">Code ICE: 987654321</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-col gap-2 border-t border-slate-200/60 pt-4 text-xs text-slate-500"
+                    [ngClass]="{ 'border-slate-200/60 text-slate-500': theme() === 'light', 'border-slate-700/70 text-slate-400': theme() === 'dark' }">
+                    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                        <span>© 2026 Direction Générale des Impôts</span>
+                        <span>Politique de confidentialité • Conditions générales d'utilisation</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

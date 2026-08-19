@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Portail fiscal — Direction Générale des Impôts</title>
+  <rect width="64" height="64" rx="16" fill="#2563EB"/>
+  <path d="M16 27.5 32 17l16 10.5H16Z" fill="#E9C46A"/>
+  <path d="M19 30h26v18H19z" fill="#FFF"/>
+  <path d="M17 49.5h30" stroke="#E9C46A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M24 33v12M32 33v12M40 33v12" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+  <path d="M14 53h36" stroke="#FFF" stroke-opacity=".72" stroke-width="2" stroke-linecap="round"/>
+</svg>

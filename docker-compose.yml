@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: dgi-postgres
+    environment:
+      POSTGRES_DB: dgi_immatriculation
+      POSTGRES_USER: dgi_user
+      POSTGRES_PASSWORD: dgi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dgi_user -d dgi_immatriculation"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./dgi-backend-fixed
+      dockerfile: Dockerfile
+    container_name: dgi-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/dgi_immatriculation
+      DB_USERNAME: dgi_user
+      DB_PASSWORD: dgi_password
+      SERVER_PORT: 8081
+      JWT_SECRET: VotreCleSecreteDGIImmatriculationAuMoins256BitsDeRandom
+      JWT_EXPIRATION_MS: 86400000
+      STOCKAGE_CHEMIN_RACINE: /var/dgi/documents
+      OCR_TESSDATA_PATH: /opt/tessdata
+      OCR_LANGUE: ara+fra
+      FACE_CASCADE_PATH: /opt/opencv/haarcascade_frontalface_default.xml
+      FACE_SEUIL_ACCEPTATION: 0.75
+      CORS_ALLOWED_ORIGINS: http://localhost:4200
+      LLM_BASE_URL: https://api.groq.com/openai/v1
+      LLM_MODEL: llama-3.1-70b-versatile
+      LLM_API_KEY: ""        # ← put your Groq key here
+      LOG_LEVEL_DGI: INFO
+    ports:
+      - "8081:8081"
+    volumes:
+      - dgi_documents:/var/dgi/documents
+
+  frontend:
+    build:
+      context: ./dgi-frontend-fixed
+      dockerfile: Dockerfile
+    container_name: dgi-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  pgdata:
+  dgi_documents:

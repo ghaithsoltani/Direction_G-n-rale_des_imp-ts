@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:dgitest;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+  h2:
+    console:
+      enabled: true
+
+app:
+  cors:
+    allowed-origins: http://localhost:4200
+  stockage:
+    chemin-racine: /tmp/dgi-test-documents
+  ocr:
+    tessdata-path: /tmp/tessdata-test
+  face-verification:
+    seuil-acceptation: 0.75
+    cascade-path: /tmp/cascade-test.xml
+  # FIX 6: jwt.secret was missing — caused IllegalArgumentException in all integration tests
+  jwt:
+    secret: dgi-test-secret-key-for-tests-only-minimum-256bits-long-enough
+    expiration-ms: 3600000
+
+logging:
+  level:
+    root: WARN
+    tn.gov.dgi.immatriculation: DEBUG
+    org.hibernate.SQL: DEBUG
