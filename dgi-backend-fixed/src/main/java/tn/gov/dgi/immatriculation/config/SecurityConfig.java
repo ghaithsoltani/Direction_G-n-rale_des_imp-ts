@@ -85,7 +85,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register-agent").hasRole("ADMIN")
 
                 // ── Swagger / Actuator ───────────────────────────────────────
-                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/actuator/health").permitAll()
+                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/actuator/**").permitAll()
 
                 // ── Contribuables ────────────────────────────────────────────
                 .requestMatchers(HttpMethod.POST, "/api/contribuables").permitAll()
