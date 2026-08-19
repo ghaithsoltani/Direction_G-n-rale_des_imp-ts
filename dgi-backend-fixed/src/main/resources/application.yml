@@ -28,6 +28,16 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
   servlet:
     multipart:
       max-file-size: 15MB
