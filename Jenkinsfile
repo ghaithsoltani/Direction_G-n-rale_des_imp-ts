@@ -68,9 +68,8 @@ pipeline {
             steps {
                 echo 'Deploying with docker-compose...'
                 sh """
-                    cd /home/ghaith/Desktop/MyExperinsDevV1
-                    docker-compose pull
-                    docker-compose up -d
+                    docker-compose -f ${WORKSPACE}/docker-compose.yml down
+                    IMAGE_TAG=${IMAGE_TAG} docker-compose -f ${WORKSPACE}/docker-compose.yml up -d
                 """
             }
         }
