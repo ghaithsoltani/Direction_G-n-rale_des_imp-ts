@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: dgi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghaithsoltani/dgi-backend:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_URL
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: SERVER_PORT
+              value: "8081"
+            - name: JWT_SECRET
+              value: "VotreCleSecreteDGIImmatriculationAuMoins256BitsDeRandom"
+            - name: CORS_ALLOWED_ORIGINS
+              value: "http://localhost:4200"
+            - name: OCR_TESSDATA_PATH
+              value: "/opt/tessdata"
+            - name: FACE_CASCADE_PATH
+              value: "/opt/opencv/haarcascade_frontalface_default.xml"
+            - name: STOCKAGE_CHEMIN_RACINE
+              value: "/var/dgi/documents"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
